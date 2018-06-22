@@ -47,7 +47,7 @@ p.iIter    = 8; % Inner FISTA iterations
 p.minIter  = 1/2; % Minimum number of inner iterations (as a fraction of p.iIter) to run for each outer iteration
 p.fstIter  = 2; % for oIter = 1, the iIter = p.iIter x p.fstIter
 p.stpThrsh = 2e-6; % Stopping threshold
-p.L1       = 1.501;%[];%1.501; % Lipschitz constant for the fidelity term; will be calculated if left empty
+p.L1       = [];%1.501; % Lipschitz constant for the fidelity term; will be calculated if left empty
 
 
 
@@ -95,7 +95,7 @@ x0  = x0 + 0.010*max(abs(x0(:)))*randn(size(x0)); % inital image guess
 p.lmb0  = 0.25/mean(abs(p.U(x0)));   % Initial /lambda guess
 
 %%%%%%%%%%%%%%%%%%%%%%%%%  bFISTA slover   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tic;[tmp,lmb,~,L1] = bFISTA(y, x0, p);toc % reconstrution with data weighting
+tic;[tmp,lmb,L1] = bFISTA(y, x0, p);toc % reconstrution with data weighting
 %
 %% save reconstructed image
 xHat = 1/sclFctr * tmp;
