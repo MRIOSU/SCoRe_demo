@@ -1,4 +1,4 @@
-function [x, lmb, G, L1] = bFISTA(b, x0, param)
+function [x, lmb, L1] = bFISTA(b, x0, param)
 %-----------------------------------------------------------------------
 % Adhmad.46@osu.edu
 % Last modified: Feb. 17, 2017
