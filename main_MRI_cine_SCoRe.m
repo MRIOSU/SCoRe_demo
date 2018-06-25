@@ -53,7 +53,7 @@ p.L1       = [];%1.501; % Lipschitz constant for the fidelity term; will be calc
 
 %% Load data and perform recon
 
-load('input_data.mat');
+load('.\data\input1_4CH.mat');
 slDim = 5; %dims of data is fixed as [RO E1 E2 CHA SLC PHS other]
 sl = size(data,slDim); % slice number
        
