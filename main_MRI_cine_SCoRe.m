@@ -41,22 +41,19 @@ p.nTol	   = [5e-3, 1/10]; % Noise toleratance; lambda = 1/(L1 + noise tolerance)
 p.lRes     = [0.3, 5]; % Restriction on lambda values; for p.lRes(1) interations, keep max(lambda)<= p.lRes(2)*meanLambda
 
 
-%% bFISTA paramters (some paramters redefined below)
+%% bFISTA paramters
 p.oIter = 10;  % Total outer iteration
 p.iIter    = 8; % Inner FISTA iterations
 p.minIter  = 1/2; % Minimum number of inner iterations (as a fraction of p.iIter) to run for each outer iteration
 p.fstIter  = 2; % for oIter = 1, the iIter = p.iIter x p.fstIter
 p.stpThrsh = 2e-6; % Stopping threshold
-p.L1       = [];%1.501; % Lipschitz constant for the fidelity term; will be calculated if left empty
+p.L1       = []; % Lipschitz constant for the fidelity term; will be calculated if left empty
 
 
 
 %% Load data and perform recon
-
-load('.\data\input1_4CH.mat');
-slDim = 5; %dims of data is fixed as [RO E1 E2 CHA SLC PHS other]
-sl = size(data,slDim); % slice number
-       
+filename = 'input3_SAX.mat';
+load(['.\data\' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
 [y,samp] = dataAjst(data,p,param);
 p.param = param;
 
@@ -97,8 +94,16 @@ p.lmb0  = 0.25/mean(abs(p.U(x0)));   % Initial /lambda guess
 %%%%%%%%%%%%%%%%%%%%%%%%%  bFISTA slover   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 tic;[tmp,lmb,L1] = bFISTA(y, x0, p);toc % reconstrution with data weighting
 %
-%% save reconstructed image
+%% reconstructed image xHat
 xHat = 1/sclFctr * tmp;
+%display the image
+figure;
+for n = 1:2
+    for fr = 1:size(xHat,3)
+        imagesc(abs(xHat(:,:,fr)),[0,8*mean(abs(xHat(:)))]); colormap(gray); axis image; axis off; pause(0.001*p.param.TRes);
+    end
+end
 p.lmb = lmb(p.bInd(1:end-1)+1);
 pOut = p; pOut.A = []; pOut.At =[]; pOut.U = []; pOut.Ut =[];
+save(['./data/output' filename(6:end)],'xHat','pOut');
 close all;
