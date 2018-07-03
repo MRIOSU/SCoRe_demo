@@ -14,8 +14,8 @@ end
 
 
 %% Data parameters
-p.nStd0  = 1; % Noise power in each channel after noise prewhiting. 
-              % If pre-scan is not available, set p.nStd0=[] to guesstimate noise power from the outer fringes of k-space
+p.nStd0  = 1; % Noise variance in each channel after noise prewhiting. 
+              % If pre-scan is not available, set p.nStd0=[] to guesstimate noise variance from the outer fringes of k-space
 p.yMx    = 50; % Normalize the data to this max value; for numerical stability only
 p.isoRes  = 1; % zero-pad PE to make the spatial resolution isotropic
 
@@ -57,6 +57,11 @@ filename = 'S1_2CH.mat';
 load(['.\data\' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
 [y,samp] = dataAjst(data,p,param);
 p.param = param; % pulse sequence related parameters
+
+%%%%%%%%%%%%%%%%%%%%%%%   Normalize noise variance   %%%%%%%%%%%%%%%%%%%%%%
+if isempty(p.nStd0)
+  y = noiseScl(y);
+end
 
 %%%%%%%%%%%%%%%%%       Coil sensitivity estimation     %%%%%%%%%%%%%%%%%%%
 tic;[S,x0]  = coilSen(y, samp, p);toc;
