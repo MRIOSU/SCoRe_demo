@@ -54,7 +54,8 @@ p.L1       = []; % Lipschitz constant for the fidelity term; will be calculated 
 
 %% Load data and perform recon
 filename = 'S1_2CH.mat';
-load(['./data/' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
+load(['./data/' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel----For Mac
+% load(['.\data\' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel----For Windows
 [y,samp] = dataAjst(data,p,param);
 p.param = param; % pulse sequence related parameters
 
