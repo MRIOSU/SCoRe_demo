@@ -42,7 +42,6 @@ t = 1;
 disp(['Initial objective function: ' sprintf('%0.3f',objDF) ' + ' ...
       sprintf('%0.3f',objWav) ' = ' sprintf('%0.3f',objDF+objWav)]);
 
-dispim = figure;
 for o = 1:oIter % outer (reweighting) iteration
     stop = 0;
     iter = 0;
@@ -92,9 +91,9 @@ for o = 1:oIter % outer (reweighting) iteration
     
     %2D cine image (show the image of central-frame)
     im0 = x(:,:,ceil(size(x,3)/2),1,1,1);
-    figure(dispim);
+    figure(333);
     imagesc(abs(im0),[0,0.3*max(abs(x(:)))]); axis('image'); colormap(gray); title(['oIter: ' num2str(o)]);
-    pause(0.01);
+    pause(0.001);
     disp(['OuterIter: ' num2str(o)  ', Change in x: ' sprintf('%0.3e',tmp) ', objective: ' sprintf('%0.3f',objDF) ' + ' sprintf('%0.3f',objWav) ' = ' sprintf('%0.3f',objDF+objWav)]);
     
 end
