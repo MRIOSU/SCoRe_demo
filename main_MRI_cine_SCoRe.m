@@ -37,12 +37,12 @@ p.nFtr     = 1; % Global scaling of the noise power
 p.sFtri    = 2; % Global "initial" scaling of the composite sparsity term
 p.sFtrf    = 1; % Global "final" scaling of the composite sparsity term
 
-p.nTol	   = [5e-3, 1/10]; % Noise toleratance; lambda = 1/(L1 + noise tolerance)
+p.nTol	   =  1e-4; % to calculate epsilon; lambda = 1/(L1 + epsilon), where epsilong = p.nTol x max_coefficient
 p.lRes     = [0.3, 5]; % Restriction on lambda values; for p.lRes(1) interations, keep max(lambda)<= p.lRes(2)*meanLambda
 
 
 %% bFISTA paramters
-p.oIter = 10;  % Total outer iteration
+p.oIter    = 10;  % Total outer iteration
 p.iIter    = 8; % Inner FISTA iterations
 p.minIter  = 1/2; % Minimum number of inner iterations (as a fraction of p.iIter) to run for each outer iteration
 p.fstIter  = 2; % for oIter = 1, the iIter = p.iIter x p.fstIter
