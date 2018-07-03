@@ -12,7 +12,7 @@ nStdW  = param.nStdI; % Noise in image/transform domain
 Nlim   = param.Nlim;
 wt     = zeros(nCoef,1);
 
-avCoefX= max(mean(abs(coefX(:)))*param.nTol(1), nStdW*param.nTol(2));
+avCoefX= max(abs(coefX(:)))*param.nTol(1); % epsilon
 
 sLP    = param.sLP;
 bGrp   = param.bGrp;
