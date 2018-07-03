@@ -14,16 +14,16 @@ end
 
 
 %% Data parameters
-p.nStd0  = 1; % Noise variance in each channel after noise prewhiting. 
+p.nStd0  = 1; % Noise variance in each channel after pre-scan (not-included) based noise prewhitening. 
               % If pre-scan is not available, set p.nStd0=[] to guesstimate noise variance from the outer fringes of k-space
 p.yMx    = 50; % Normalize the data to this max value; for numerical stability only
-p.isoRes  = 1; % zero-pad PE to make the spatial resolution isotropic
+p.isoRes = 1; % zero-pad PE to make the spatial resolution isotropic
 
 %% sensitivity estimation parameters
 p.fil    = [6,6,6];  % size of kernal for eSPIRiT
 p.ACSsz  = [64,64,30]; % size of the k-space block used for eSPIRiT
 p.eSRT   = 0.95;
-p.avgPhs = 1; % Assign the phase to time-average image. 1: yes, 0: no
+p.avgPhs = 1; % Assign the phase to time-average image. 1 (default): yes, 0: no
 
 %% Sparsifying transform parameters
 p.N      = 1;  % level of decomposition
@@ -54,13 +54,14 @@ p.L1       = []; % Lipschitz constant for the fidelity term; will be calculated 
 
 %% Load data and perform recon
 filename = 'S1_2CH.mat';
-load(['.\data\' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
+load(['./data/' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
 [y,samp] = dataAjst(data,p,param);
 p.param = param; % pulse sequence related parameters
 
 %%%%%%%%%%%%%%%%%%%%%%%   Normalize noise variance   %%%%%%%%%%%%%%%%%%%%%%
 if isempty(p.nStd0)
   y = noiseScl(y);
+  p.nStd0 = 1;
 end
 
 %%%%%%%%%%%%%%%%%       Coil sensitivity estimation     %%%%%%%%%%%%%%%%%%%
@@ -106,10 +107,10 @@ xHat = 1/sclFctr * tmp;
 figure;
 for n = 1:2
     for fr = 1:size(xHat,3)
-        imagesc(abs(xHat(:,:,fr)),[0,8*mean(abs(xHat(:)))]); colormap(gray); axis image; axis off; pause(0.001*p.param.TRes);
+        imagesc(abs(xHat(:,:,fr)),[0,8*median(abs(xHat(:)))]); colormap(gray); axis image; axis off; pause(0.001*p.param.TRes);
     end
 end
 p.lmb = lmb(p.bInd(1:end-1)+1);
 pOut = p; pOut.A = []; pOut.At =[]; pOut.U = []; pOut.Ut =[];
-save(['./data/output' filename(6:end)],'xHat','pOut');
+save(['./data/output_' filename(1:end)],'xHat','pOut');
 close all;
