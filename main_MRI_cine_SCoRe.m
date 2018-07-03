@@ -14,8 +14,9 @@ end
 
 
 %% Data parameters
-p.nStd0  = 1; % Noise power after noise prewhiting
-p.yMx    = 50; % Normalize the data to this max value
+p.nStd0  = 1; % Noise power in each channel after noise prewhiting. 
+              % If pre-scan is not available, set p.nStd0=[] to guesstimate noise power from the outer fringes of k-space
+p.yMx    = 50; % Normalize the data to this max value; for numerical stability only
 p.isoRes  = 1; % zero-pad PE to make the spatial resolution isotropic
 
 %% sensitivity estimation parameters
@@ -25,16 +26,16 @@ p.eSRT   = 0.95;
 p.avgPhs = 1; % Assign the phase to time-average image. 1: yes, 0: no
 
 %% Sparsifying transform parameters
-p.N        = 1;  % level of decomposition
-p.dict = {{'db1','db1','db1'}}; % 'fd'; % concatenation of n wavelet transforms {'db1','db2',....'dbn'},                .
-p.bGrp = ones(1, 8); % band grouping for SCoRe, each group is threholded similarly
+p.N      = 1;  % level of decomposition
+p.dict   = {{'db1','db1','db1'}}; % nondecimated db1 (Haar) wavelet in x-y-t domain               .
+p.bGrp   = ones(1, 8); % subband grouping for SCoRe, each group is threholded similarly
 
 
 %% SCoRe parameters
-p.sLP      = 1; % the distribution may be skewed along real or imaginary axis;
+p.sLP      = 1; % to account for the Laplacian distribtuion that has unequal distribution along real and imaginary axis;
  
 p.nFtr     = 1; % Global scaling of the noise power
-p.sFtri    = 2; % Global "initial" scaling of the composite sparsity term
+p.sFtri    = 2; % Global "initial" scaling of the composite sparsity term; for faster convergence
 p.sFtrf    = 1; % Global "final" scaling of the composite sparsity term
 
 p.nTol	   =  1e-4; % to calculate epsilon; lambda = 1/(L1 + epsilon), where epsilong = p.nTol x max_coefficient
@@ -52,19 +53,19 @@ p.L1       = []; % Lipschitz constant for the fidelity term; will be calculated 
 
 
 %% Load data and perform recon
-filename = 'input1_4CH.mat';
+filename = 'S1_2CH.mat';
 load(['.\data\' filename]);%dims of data is fixed as [RO E1 E2 CHA SLC PHS other], Noise power = 1 for each channel
 [y,samp] = dataAjst(data,p,param);
-p.param = param;
+p.param = param; % pulse sequence related parameters
 
 %%%%%%%%%%%%%%%%%       Coil sensitivity estimation     %%%%%%%%%%%%%%%%%%%
 tic;[S,x0]  = coilSen(y, samp, p);toc;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%  Data  Scaling   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% crop data and find matrix size
+% crop the oversampled region in the readout direction and find matrix size
 [y, yMat, samp, sampInd, sclFctr, nSize] = dataScal(y, p);
 p.n = [nSize(1:end-2),nSize(end)]; % Image size (remove the coil_dim in k-space)
-p.R = numel(samp(floor(end/2)+1,:,:))/sum(sum(samp(floor(end/2)+1,:,:))); % Net acceleration
+p.R = numel(samp(floor(end/2)+1,:,:))/sum(sum(samp(floor(end/2)+1,:,:))); % Net acceleration (not including asymmetric echo)
 dim_image = numel(p.n); % image dimmension
 
 %%%%%%%%%%%%%%%%%%%%%%%%%  Initialization   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
