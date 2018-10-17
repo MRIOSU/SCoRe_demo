@@ -41,7 +41,8 @@ t = 1;
 [objDF, objWav] = wObjective(b, x, lmb0, param);
 disp(['Initial objective function: ' sprintf('%0.3f',objDF) ' + ' ...
       sprintf('%0.3f',objWav) ' = ' sprintf('%0.3f',objDF+objWav)]);
-
+  
+c(1)=1; % This is outside the outer for loop
 for o = 1:oIter % outer (reweighting) iteration
     stop = 0;
     iter = 0;
@@ -55,6 +56,12 @@ for o = 1:oIter % outer (reweighting) iteration
     end
     [lmb, ~] = findWFst(Ux, param);
     clear Ux;
+    
+    
+    if o>1 && ~isempty(param.disp)% This should appear right before you enter the inner (bFISTA) loop
+        c(o) = min(max(c(o-1) * param.disp*param.nStd^2 / std(A(x)-b)^2, 1/2),2)
+        lmb = c(o)*lmb;
+    end
     
     % For the first outer iteration
     if oIter == 1
