@@ -41,6 +41,8 @@ p.sFtrf    = 1; % Global "final" scaling of the composite sparsity term
 p.nTol	   =  1e-4; % to calculate epsilon; lambda = 1/(L1 + epsilon), where epsilong = p.nTol x max_coefficient
 p.lRes     = [0.3, 5]; % Restriction on lambda values; for p.lRes(1) interations, keep max(lambda)<= p.lRes(2)*meanLambda
 
+p.disp = []; %discrepancy principle, set to less than 1 when images were too soft and greater than 1 when images were too noisy
+
 
 %% bFISTA paramters
 p.oIter    = 10;  % Total outer iteration
