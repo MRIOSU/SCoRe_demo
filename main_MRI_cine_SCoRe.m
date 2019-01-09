@@ -62,8 +62,8 @@ p.param = param; % pulse sequence related parameters
 
 %%%%%%%%%%%%%%%%%%%%%%%   Normalize noise variance   %%%%%%%%%%%%%%%%%%%%%%
 if isempty(p.nStd0)
-  y = noiseScl(y);
-  p.nStd0 = 1;
+  y = noiseScl(y); % Here noise is estimated from peripheral k-space; a more accurate option is to use pre-scan
+  p.nStd0 = 1; % in noiseScl, noise std was scaled to one
 end
 
 %%%%%%%%%%%%%%%%%       Coil sensitivity estimation     %%%%%%%%%%%%%%%%%%%
